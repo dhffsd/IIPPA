@@ -13,4 +13,6 @@ public interface AdminMapper {
     @Insert("Insert into admin(username,password,email,phone,role,created_time,updated_time)" +
             "values(#{username},#{password},#{email},#{phone},#{role},now(),now())")
     void register(String username, String password, String email, String phone, String role);
+    @Select("select * from admin where username=#{username}")
+    Admin GetAdminInfo(String username);
 }

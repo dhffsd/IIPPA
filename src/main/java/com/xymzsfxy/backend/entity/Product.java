@@ -5,7 +5,9 @@ import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import java.io.Serializable;
-/** 
+import java.util.Date;
+
+/**
  * @team mackie Studio 
  * @Author 无深 
  * @Date 2025-02-23 23:17:39 
@@ -46,6 +48,12 @@ public class Product  implements Serializable {
 	 */
    	@Column(name = "image_url" )
 	private String imageUrl;
+
+    @Column(name = "created_time" )
+    private Date createdTime;
+
+    @Column(name = "updated_time" )
+    private Date updatedTime;
 
   public Long getId() {
     return id;
@@ -90,5 +98,22 @@ public class Product  implements Serializable {
   public void setImageUrl(String imageUrl) {
     this.imageUrl = imageUrl;
   }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
+    }
 
 }

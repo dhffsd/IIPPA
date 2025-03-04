@@ -5,6 +5,7 @@ import com.xymzsfxy.backend.returncode.Result;
 import com.xymzsfxy.backend.service.AdminService;
 import com.xymzsfxy.backend.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,14 +21,14 @@ public class AdminController {
 
     //    管理员注册
     @PostMapping("/register")
-    public Result register(String username, String password, String email, String phone, String role) {
+    public Result register(String username, String password, String email, String phone) {
         // 查找管理员是否存在
         Admin admin = adminService.FindByUserName(username);
         if (admin != null) {
             return Result.error("管理员已存在");
         }
         // 注册
-        adminService.register(username, password, email, phone, role);
+        adminService.register(username, password, email, phone);
         return Result.success();
     }
 
@@ -49,4 +50,18 @@ public class AdminController {
         return Result.success(token);
     }
 
+    // 获取管理员详细信息
+    @GetMapping("/getInfo")
+    public Result<Admin> getAdminInfo(String username) {
+        // 查询用户名是否存在
+        Admin admin = adminService.FindByUserName(username);
+        if(admin == null){
+            return Result.error("用户不存在");
+        }
+        // 获取管理员信息
+        Admin adminInfo = adminService.GetAdminInfo(username);
+        System.out.println(adminInfo.getCreatedTime());
+
+        return Result.success(adminInfo);
+    }
 }

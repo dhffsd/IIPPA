@@ -18,8 +18,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void register(String username, String password, String email, String phone, String role) {
+    public void register(String username, String password, String email, String phone) {
+        String role = "普通管理员";
         adminMapper.register(username,password,email,phone,role);
 
+    }
+
+    @Override
+    public Admin GetAdminInfo(String username) {
+        Admin adminInfo = adminMapper.GetAdminInfo(username);
+        return adminInfo;
     }
 }
