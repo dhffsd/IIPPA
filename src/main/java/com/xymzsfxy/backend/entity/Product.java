@@ -1,28 +1,35 @@
 package com.xymzsfxy.backend.entity;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import java.io.Serializable;
-import java.util.Date;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-/**
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.math.BigDecimal;
+/** 
  * @team mackie Studio 
  * @Author 无深 
- * @Date 2025-02-23 23:17:39 
+ * @Date 2025-03-09 14:46:13 
  */
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table ( name ="product" )
 public class Product  implements Serializable {
 
-	private static final long serialVersionUID =  3658265919353969595L;
+	private static final long serialVersionUID =  481064042210326062L;
 
 	/**
 	 * 商品ID
 	 */
 	@Id
    	@Column(name = "id" )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	/**
@@ -38,10 +45,22 @@ public class Product  implements Serializable {
 	private String category;
 
 	/**
+	 * 第三方平台商品ID
+	 */
+   	@Column(name = "external_id" )
+	private String externalId;
+
+	/**
 	 * 商品描述
 	 */
    	@Column(name = "description" )
 	private String description;
+
+	/**
+	 * 最新的价格
+	 */
+   	@Column(name = "latest_price" )
+	private BigDecimal latestPrice;
 
 	/**
 	 * 商品图片链接
@@ -49,11 +68,19 @@ public class Product  implements Serializable {
    	@Column(name = "image_url" )
 	private String imageUrl;
 
-    @Column(name = "created_time" )
-    private Date createdTime;
+	/**
+	 * 创建时间
+	 */
+   	@Column(name = "created_time" )
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	private Date createdTime;
 
-    @Column(name = "updated_time" )
-    private Date updatedTime;
+	/**
+	 * 更新时间
+	 */
+   	@Column(name = "updated_time" )
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	private LocalDateTime updatedTime;
 
   public Long getId() {
     return id;
@@ -82,12 +109,30 @@ public class Product  implements Serializable {
   }
 
 
+  public String getExternalId() {
+    return externalId;
+  }
+
+  public void setExternalId(String externalId) {
+    this.externalId = externalId;
+  }
+
+
   public String getDescription() {
     return description;
   }
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+
+  public BigDecimal getLatestPrice() {
+    return latestPrice;
+  }
+
+  public void setLatestPrice(BigDecimal latestPrice) {
+    this.latestPrice = latestPrice;
   }
 
 
@@ -99,21 +144,22 @@ public class Product  implements Serializable {
     this.imageUrl = imageUrl;
   }
 
-    public Date getCreatedTime() {
-        return createdTime;
-    }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
-    }
+  public Date getCreatedTime() {
+    return createdTime;
+  }
+
+  public void setCreatedTime(Date createdTime) {
+    this.createdTime = createdTime;
+  }
 
 
-    public Date getUpdatedTime() {
-        return updatedTime;
-    }
+  public LocalDateTime getUpdatedTime() {
+    return updatedTime;
+  }
 
-    public void setUpdatedTime(Date updatedTime) {
-        this.updatedTime = updatedTime;
-    }
+  public void setUpdatedTime(LocalDateTime updatedTime) {
+    this.updatedTime = updatedTime;
+  }
 
 }

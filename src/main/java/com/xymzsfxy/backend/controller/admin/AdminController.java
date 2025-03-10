@@ -25,7 +25,7 @@ public class AdminController {
         // 查找管理员是否存在
         Admin admin = adminService.FindByUserName(username);
         if (admin != null) {
-            return Result.error("管理员已存在");
+            return Result.badRequest("管理员已存在");
         }
         // 注册
         adminService.register(username, password, email, phone);
@@ -38,7 +38,7 @@ public class AdminController {
         // 判断用户是否存在
         Admin admin = adminService.FindByUserName(username);
         if(admin == null){
-            return Result.error("用户不存在");
+            return Result.notFound("用户");
         }
 
         // 生成令牌
@@ -56,7 +56,7 @@ public class AdminController {
         // 查询用户名是否存在
         Admin admin = adminService.FindByUserName(username);
         if(admin == null){
-            return Result.error("用户不存在");
+            return Result.notFound("用户");
         }
         // 获取管理员信息
         Admin adminInfo = adminService.GetAdminInfo(username);

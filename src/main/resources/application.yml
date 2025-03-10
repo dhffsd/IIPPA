@@ -4,6 +4,25 @@ spring:
     url: jdbc:mysql://localhost:3306/industrial_ecommerce
     username: root
     password: 123456
+  jackson:
+    time-zone: UTC
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+crawler:
+  timeout-ms: 30000
+  user-agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+  sources:
+    tmall: "https://detail.tmall.com/item.htm?id=%s" # 添加必要参数
+  selectors:
+    tmall:
+      price:
+        selector: "div[style*='color: rgb(255, 79, 0)'] > span.text--Mdqy24Ex"
+        transform: |
+          value.replace(/[^\d.]/g, '')

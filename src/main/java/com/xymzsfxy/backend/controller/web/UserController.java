@@ -28,7 +28,7 @@ public class UserController {
             userService.register(username, password);
             return Result.success();
         } else {
-            return Result.error("用户名已占用");
+            return Result.badRequest("用户名已占用");
         }
     }
 
@@ -38,7 +38,7 @@ public class UserController {
         User u = userService.findByUserName(username);
 //        判断该用户是否存在
         if(u == null){
-            return Result.error("该用户不存在");
+            return Result.notFound("该用户");
         }
 
 //        判断密码是否正确
@@ -50,7 +50,7 @@ public class UserController {
             String token = JWTUtils.genToken(claims); // 生成JWT令牌
             return Result.success(token); // 返回JWT令牌
         }else {
-            return Result.error("密码错误");
+            return Result.badRequest("密码错误");
         }
     }
 }

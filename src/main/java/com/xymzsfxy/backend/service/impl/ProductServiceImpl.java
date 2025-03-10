@@ -6,6 +6,8 @@ import com.xymzsfxy.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
@@ -30,5 +32,30 @@ public class ProductServiceImpl implements ProductService {
     public Product FindByProductId(Long id) {
         Product product = productMapper.FindByProductId(id);
         return product;
+    }
+
+    @Override
+    public List<Product> get(Integer page, Integer size) {
+        // 计算偏移量
+        Integer offset = (page - 1) * size;
+        List<Product> product = productMapper.get(offset, size);
+        return product;
+    }
+
+    @Override
+    public Long getTotalCount() {
+        return productMapper.getTotalCount();
+    }
+
+    @Override
+    public List<Product> FindByProductName(String name, Integer page, Integer size) {
+        // 计算偏移量
+        Integer offset = (page - 1) * size;
+        return productMapper.FindByProductName(name,offset,size);
+    }
+
+    @Override
+    public Long getNameCount(String name) {
+        return productMapper.getNameCount(name);
     }
 }
