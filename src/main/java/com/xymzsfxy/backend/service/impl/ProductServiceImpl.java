@@ -3,6 +3,7 @@ package com.xymzsfxy.backend.service.impl;
 import com.xymzsfxy.backend.entity.Product;
 import com.xymzsfxy.backend.mapper.ProductMapper;
 import com.xymzsfxy.backend.service.ProductService;
+import com.xymzsfxy.backend.utils.CleanHtmlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +14,11 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductMapper productMapper;
 
+
     @Override
     public void add(String name, String category, String description,String imageUrl) {
-        productMapper.add(name,category,description,imageUrl);
+        String cleanedDescription = CleanHtmlUtils.cleanHtml(description);
+        productMapper.add(name,category,cleanedDescription,imageUrl);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.xymzsfxy.backend.controller.web;
 
+import com.xymzsfxy.backend.entity.Product;
 import com.xymzsfxy.backend.entity.User;
 import com.xymzsfxy.backend.returncode.Result;
 import com.xymzsfxy.backend.service.UserService;
@@ -7,25 +8,27 @@ import com.xymzsfxy.backend.utils.JWTUtils;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/web/user")
 @Validated
 public class UserController {
     @Autowired
     private UserService userService;
 
     @PostMapping("/register")
-    public Result register(@Pattern(regexp = "^\\S{4,16}$") String username, @Pattern(regexp = "^\\S{5,16}$") String password) {
-        User u = userService.findByUserName(username);
+    public Result register(User user) {
+        User u = userService.findByUserRegisterName(user.getUsername());
         if (u == null) {
-            userService.register(username, password);
+            userService.register(user.getUsername(),user.getPassword(),user.getUserPic(),user.getEmail());
             return Result.success();
         } else {
             return Result.badRequest("用户名已占用");
@@ -35,7 +38,7 @@ public class UserController {
     @PostMapping("/login")
     public Result<String> login(@Pattern(regexp = "^\\S{4,16}$") String username, @Pattern(regexp = "^\\S{5,16}$") String password ){
 //        根据用户名查询用户
-        User u = userService.findByUserName(username);
+        User u = userService.findByUserRegisterName(username);
 //        判断该用户是否存在
         if(u == null){
             return Result.notFound("该用户");
@@ -52,5 +55,22 @@ public class UserController {
         }else {
             return Result.badRequest("密码错误");
         }
+    }
+
+    // 获取用户信息
+    @GetMapping("/get")
+    public Result<Result.PageData<List<User>>> getAllUserInfo(Integer page,Integer size){
+        List<User> allUserInfo = userService.getAllUserInfo(page, size);
+        Long infoCount = userService.getInfoCount();
+        return Result.successWithPage(infoCount,allUserInfo);
+    }
+
+    // 根据用户名或者邮箱获取用户数据
+    @GetMapping("/getName")
+    public Result<Result.PageData<List<User>>> getName(User user, Integer page, Integer size){
+        List<User> byUserName = userService.findByUserName(user.getUsername(),page,size);
+        Long nameCount = userService.getNameCount(user.getUsername());
+        return Result.successWithPage(nameCount,byUserName);
+
     }
 }

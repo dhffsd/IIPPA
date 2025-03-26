@@ -2,7 +2,6 @@ package com.xymzsfxy.backend.controller.admin;
 
 import com.xymzsfxy.backend.entity.Product;
 import com.xymzsfxy.backend.returncode.Result;
-import com.xymzsfxy.backend.service.PriceCrawlerService;
 import com.xymzsfxy.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +14,7 @@ import java.util.List;
 public class ProductController {
     @Autowired
     private ProductService productService;
-    @Autowired
-    private PriceCrawlerService priceCrawlerService;
+
 
     // 添加商品
     @PostMapping("/add")
@@ -27,7 +25,6 @@ public class ProductController {
     // 修改商品
     @PutMapping("/update")
     public Result update(Product product){
-        System.out.println(product.getCreatedTime());
         productService.update(product.getId(),product.getName(),product.getCategory(),product.getDescription(),product.getImageUrl());
         return Result.success();
     }
@@ -70,10 +67,5 @@ public class ProductController {
         return Result.successWithPage(total,productName);
     }
 
-    // 获取爬取的价格
-    @PostMapping("/crawl")
-    public ResponseEntity<String> triggerCrawl(Product productId) {
-        priceCrawlerService.crawlPrices(productId.getId());
-        return ResponseEntity.ok("价格爬取任务已启动");
-    }
+
 }

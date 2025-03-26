@@ -56,11 +56,7 @@ public class Product  implements Serializable {
    	@Column(name = "description" )
 	private String description;
 
-	/**
-	 * 最新的价格
-	 */
-   	@Column(name = "latest_price" )
-	private BigDecimal latestPrice;
+
 
 	/**
 	 * 商品图片链接
@@ -125,16 +121,6 @@ public class Product  implements Serializable {
   public void setDescription(String description) {
     this.description = description;
   }
-
-
-  public BigDecimal getLatestPrice() {
-    return latestPrice;
-  }
-
-  public void setLatestPrice(BigDecimal latestPrice) {
-    this.latestPrice = latestPrice;
-  }
-
 
   public String getImageUrl() {
     return imageUrl;
