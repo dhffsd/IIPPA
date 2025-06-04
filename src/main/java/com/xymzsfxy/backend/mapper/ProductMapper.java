@@ -1,6 +1,5 @@
 package com.xymzsfxy.backend.mapper;
 
-import com.xymzsfxy.backend.entity.Product;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

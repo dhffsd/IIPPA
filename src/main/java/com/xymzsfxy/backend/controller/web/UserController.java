@@ -1,7 +1,5 @@
 package com.xymzsfxy.backend.controller.web;
 
-import com.xymzsfxy.backend.entity.Product;
-import com.xymzsfxy.backend.entity.User;
 import com.xymzsfxy.backend.returncode.Result;
 import com.xymzsfxy.backend.service.UserService;
 import com.xymzsfxy.backend.utils.JWTUtils;

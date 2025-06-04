@@ -1,6 +1,5 @@
 package com.xymzsfxy.backend.service.impl;
 
-import com.xymzsfxy.backend.entity.History;
 import com.xymzsfxy.backend.mapper.HistoryMapper;
 import com.xymzsfxy.backend.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;

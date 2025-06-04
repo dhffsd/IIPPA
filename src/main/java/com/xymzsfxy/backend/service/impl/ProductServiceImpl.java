@@ -1,6 +1,5 @@
 package com.xymzsfxy.backend.service.impl;
 
-import com.xymzsfxy.backend.entity.Product;
 import com.xymzsfxy.backend.mapper.ProductMapper;
 import com.xymzsfxy.backend.service.ProductService;
 import com.xymzsfxy.backend.utils.CleanHtmlUtils;

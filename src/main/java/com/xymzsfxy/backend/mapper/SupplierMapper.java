@@ -1,6 +1,5 @@
 package com.xymzsfxy.backend.mapper;
 
-import com.xymzsfxy.backend.entity.Supplier;
 import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;

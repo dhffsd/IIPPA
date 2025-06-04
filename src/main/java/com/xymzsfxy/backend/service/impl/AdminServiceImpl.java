@@ -1,6 +1,5 @@
 package com.xymzsfxy.backend.service.impl;
 
-import com.xymzsfxy.backend.entity.Admin;
 import com.xymzsfxy.backend.mapper.AdminMapper;
 import com.xymzsfxy.backend.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;

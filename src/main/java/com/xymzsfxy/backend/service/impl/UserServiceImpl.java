@@ -1,6 +1,5 @@
 package com.xymzsfxy.backend.service.impl;
 
-import com.xymzsfxy.backend.entity.User;
 import com.xymzsfxy.backend.mapper.UserMapper;
 import com.xymzsfxy.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

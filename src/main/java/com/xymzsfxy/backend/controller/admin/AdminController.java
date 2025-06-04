@@ -1,6 +1,5 @@
 package com.xymzsfxy.backend.controller.admin;
 
-import com.xymzsfxy.backend.entity.Admin;
 import com.xymzsfxy.backend.returncode.Result;
 import com.xymzsfxy.backend.service.AdminService;
 import com.xymzsfxy.backend.utils.JWTUtils;

@@ -1,6 +1,5 @@
 package com.xymzsfxy.backend.service;
 
-import com.xymzsfxy.backend.entity.History;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
