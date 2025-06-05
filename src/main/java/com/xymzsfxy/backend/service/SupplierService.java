@@ -1,5 +1,6 @@
 package com.xymzsfxy.backend.service;
 
+import com.xymzsfxy.backend.entity.Supplier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

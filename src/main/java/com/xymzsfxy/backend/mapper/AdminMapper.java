@@ -1,5 +1,6 @@
 package com.xymzsfxy.backend.mapper;
 
+import com.xymzsfxy.backend.entity.Admin;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;

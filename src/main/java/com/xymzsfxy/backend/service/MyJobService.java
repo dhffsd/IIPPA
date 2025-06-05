@@ -1,5 +1,6 @@
 package com.xymzsfxy.backend.service;
 
+import com.xymzsfxy.backend.entity.History;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

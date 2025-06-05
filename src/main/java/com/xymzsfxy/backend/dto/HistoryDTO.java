@@ -1,6 +1,8 @@
 // HistoryDTO 类
 package com.xymzsfxy.backend.dto;
 
+import com.xymzsfxy.backend.entity.History;
+
 public class HistoryDTO {
     private History history;
     private String productName;

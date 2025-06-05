@@ -30,6 +30,20 @@ crawler:
         transform: |
           value.replace(/[^\d.]/g, '')
 
+jwt:
+  secret: "5a8f1c3d7e2b9a406d5e8c7b3a0f2d1e4c5b6a7f8d9e0c1b2a3f4e5d6c7b8a" # 替换为实际密钥
+  access-token-expiration: 7200000  # 2小时 (毫秒)
+  refresh-token-expiration: 604800000  # 7天 (毫秒)
+  cookie:
+#    domain: yourdomain.com # 根据实际部署环境配置
+    secure: true # 生产环境设为true
+
+# 数据加密配置
+result:
+  encryption:
+    enabled: true # 启用响应数据加密
+    key: "u/FLkK6b4q7AeD2gHjMpQsVvXyZabcde=" # 有效的 Base64 编码密钥
+
 
 server:
   port: 8080

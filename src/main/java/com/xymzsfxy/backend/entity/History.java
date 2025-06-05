@@ -5,6 +5,7 @@ import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.math.BigDecimal;
 /** 
@@ -77,7 +78,7 @@ public class History  implements Serializable {
 	 * 数据爬取时间
 	 */
    	@Column(name = "crawl_time" )
-	private Date crawlTime;
+	private LocalDateTime crawlTime;
 
   public Long getId() {
     return id;
@@ -160,11 +161,11 @@ public class History  implements Serializable {
   }
 
 
-  public Date getCrawlTime() {
+  public LocalDateTime getCrawlTime() {
     return crawlTime;
   }
 
-  public void setCrawlTime(Date crawlTime) {
+  public void setCrawlTime(LocalDateTime crawlTime) {
     this.crawlTime = crawlTime;
   }
 

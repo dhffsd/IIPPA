@@ -1,5 +1,6 @@
 package com.xymzsfxy.backend.service.impl;
 
+import com.xymzsfxy.backend.entity.Supplier;
 import com.xymzsfxy.backend.mapper.SupplierMapper;
 import com.xymzsfxy.backend.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;

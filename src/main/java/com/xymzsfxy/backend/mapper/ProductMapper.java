@@ -1,5 +1,6 @@
 package com.xymzsfxy.backend.mapper;
 
+import com.xymzsfxy.backend.entity.Product;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public interface ProductMapper {
     Long getTotalCount();
 
     @Select("SELECT * FROM product WHERE name LIKE CONCAT('%', #{name}, '%') LIMIT #{offset}, #{size}")
-    List<Product> FindByProductName(String name,Integer offset,Integer size);
+    List<Product> FindByProductName(String name, Integer offset, Integer size);
 
     @Select("SELECT COUNT(*) FROM product WHERE name LIKE CONCAT('%', #{name}, '%')")
     Long getNameCount(String name);

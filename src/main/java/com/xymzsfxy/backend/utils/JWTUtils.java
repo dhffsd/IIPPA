@@ -4,60 +4,117 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
+import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Date;
 import java.util.Map;
 
+@Component
 public class JWTUtils {
 
-    // 密钥，用于签名和验证JWT
-    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    @Value("${jwt.secret}")
+    private String secret;
 
-    // JWT有效期，单位：毫秒
-    private static final long EXPIRATION_TIME = 86400000; // 24小时
+    @Value("${jwt.access-token-expiration:7200000}") // 默认2小时
+    private long accessTokenExpiration;
 
-    /**
-     * 生成JWT令牌
-     *
-     * @param claims 包含的用户信息
-     * @return JWT令牌
-     */
-    public static String genToken(Map<String, Object> claims) {
+    @Value("${jwt.refresh-token-expiration:604800000}") // 默认7天
+    private long refreshTokenExpiration;
+
+    @Value("${jwt.cookie.domain:}")
+    private String cookieDomain;
+
+    @Value("${jwt.cookie.secure:true}")
+    private boolean cookieSecure;
+
+    private SecretKey signingKey;
+
+    @PostConstruct
+    public void init() {
+        // 确保密钥足够长
+        if (secret.length() < 32) {
+            throw new IllegalArgumentException("JWT secret must be at least 32 characters long");
+        }
+        signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public String generateAccessToken(Map<String, Object> claims) {
+        return buildToken(claims, accessTokenExpiration);
+    }
+
+    public String generateRefreshToken(Map<String, Object> claims) {
+        return buildToken(claims, refreshTokenExpiration);
+    }
+
+    private String buildToken(Map<String, Object> claims, long expiration) {
         return Jwts.builder()
-                .setClaims(claims) // 设置用户信息
-                .setIssuedAt(new Date()) // 设置签发时间
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // 设置过期时间
-                .signWith(SECRET_KEY) // 使用密钥签名
-                .compact(); // 生成JWT字符串
+                .setClaims(claims)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .compact();
     }
 
-    /**
-     * 解析JWT令牌
-     *
-     * @param token JWT令牌
-     * @return 包含的用户信息
-     */
-    public static Claims parseToken(String token) {
+    public Claims parseClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY) // 设置签名密钥
+                .setSigningKey(signingKey)
                 .build()
-                .parseClaimsJws(token) // 解析JWT
-                .getBody(); // 获取用户信息
+                .parseClaimsJws(token)
+                .getBody();
     }
 
-    /**
-     * 验证JWT令牌是否有效
-     *
-     * @param token JWT令牌
-     * @return 是否有效
-     */
-    public static boolean validateToken(String token) {
+    public boolean validateToken(String token) {
         try {
-            parseToken(token);
+            parseClaims(token);
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            Claims claims = parseClaims(token);
+            return claims.getExpiration().before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    public ResponseCookie createAccessTokenCookie(String token) {
+        return buildCookie("access_token", token, accessTokenExpiration);
+    }
+
+    public ResponseCookie createRefreshTokenCookie(String token) {
+        return buildCookie("refresh_token", token, refreshTokenExpiration);
+    }
+
+    public ResponseCookie createLogoutCookie(String name) {
+        return buildCookie(name, "", 0);
+    }
+
+    private ResponseCookie buildCookie(String name, String value, long maxAgeMillis) {
+        return ResponseCookie.from(name, value)
+                .httpOnly(true)
+                .secure(cookieSecure)
+                .path("/")
+                .domain(cookieDomain)
+                .maxAge(maxAgeMillis / 1000) // 转换为秒
+                .sameSite("Lax")
+                .build();
+    }
+
+    public String getUsernameFromToken(String accessToken) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(signingKey)
+                .parseClaimsJws(accessToken)
+                .getBody();
+        return claims.get("username", String.class);
     }
 }

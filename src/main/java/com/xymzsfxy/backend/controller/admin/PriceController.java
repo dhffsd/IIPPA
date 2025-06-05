@@ -2,6 +2,8 @@ package com.xymzsfxy.backend.controller.admin;
 
 
 import com.xymzsfxy.backend.dto.HistoryDTO;
+import com.xymzsfxy.backend.entity.History;
+import com.xymzsfxy.backend.entity.Product;
 import com.xymzsfxy.backend.returncode.Result;
 import com.xymzsfxy.backend.service.HistoryService;
 import com.xymzsfxy.backend.service.ProductService;

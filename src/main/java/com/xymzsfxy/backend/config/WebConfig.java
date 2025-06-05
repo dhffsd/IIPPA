@@ -22,14 +22,14 @@ public class WebConfig implements WebMvcConfigurer {
         registrar.registerFormatters(registry);
     }
 
-//    @Override
-//    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
-//                .allowedOrigins("http://182.92.154.131") // 前端域名
-//                .allowedMethods("GET", "POST", "PUT", "DELETE")
-//                .allowedHeaders("*")
-//                .allowCredentials(true); // 允许携带 Cookie
-//    }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:5173") // 前端域名
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*")
+                .allowCredentials(true); // 允许携带 Cookie
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

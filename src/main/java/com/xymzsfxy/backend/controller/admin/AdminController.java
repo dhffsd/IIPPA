@@ -1,5 +1,6 @@
 package com.xymzsfxy.backend.controller.admin;
 
+import com.xymzsfxy.backend.entity.Admin;
 import com.xymzsfxy.backend.returncode.Result;
 import com.xymzsfxy.backend.service.AdminService;
 import com.xymzsfxy.backend.utils.JWTUtils;
@@ -17,6 +18,9 @@ import java.util.Map;
 public class AdminController {
     @Autowired
     private AdminService adminService;
+
+    @Autowired
+    private JWTUtils jwtUtils;
 
     //    管理员注册
     @PostMapping("/register")
@@ -44,7 +48,7 @@ public class AdminController {
         Map<String, Object> claims = new HashMap<>();
         claims.put("adminId",admin.getId());
         claims.put("adminName",admin.getUsername());
-        String token = JWTUtils.genToken(claims);
+        String token = jwtUtils.generateAccessToken(claims);
         // 登录
         return Result.success(token);
     }

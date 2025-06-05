@@ -1,5 +1,6 @@
 package com.xymzsfxy.backend.service;
 
+import com.xymzsfxy.backend.entity.Admin;
 import org.springframework.stereotype.Service;
 
 @Service

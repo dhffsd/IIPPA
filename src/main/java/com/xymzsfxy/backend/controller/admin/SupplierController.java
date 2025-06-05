@@ -1,5 +1,6 @@
 package com.xymzsfxy.backend.controller.admin;
 
+import com.xymzsfxy.backend.entity.Supplier;
 import com.xymzsfxy.backend.returncode.Result;
 import com.xymzsfxy.backend.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;

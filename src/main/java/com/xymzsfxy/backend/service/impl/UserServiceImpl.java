@@ -1,7 +1,11 @@
 package com.xymzsfxy.backend.service.impl;
 
+import com.xymzsfxy.backend.dto.LoginDTO;
+import com.xymzsfxy.backend.entity.Users;
 import com.xymzsfxy.backend.mapper.UserMapper;
 import com.xymzsfxy.backend.service.UserService;
+import com.xymzsfxy.backend.utils.JWTUtils;
+import com.xymzsfxy.backend.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,16 +16,22 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private PasswordUtils passwordUtils;
+
+    @Autowired
+    private JWTUtils jwtUtils;
+
     // 实现根据用户名查找
     @Override
-    public List<User> findByUserName(String username, Integer page, Integer size) {
+    public List<Users> findByUserName(String username, Integer page, Integer size) {
         Integer offset = (page - 1) * size;
-        List<User> u = userMapper.findByUserName(username,offset,size);
+        List<Users> u = userMapper.findByUserName(username,offset,size);
         return u;
     }
 
     @Override
-    public void register(String username, String password, String userPic, String email) {
+    public void register(String username, String password) {
         // 清理用户名：去除前后空格，去掉开头的逗号
         username = username.trim();
         if (username.startsWith(",")) {
@@ -29,13 +39,14 @@ public class UserServiceImpl implements UserService {
         }
 
 //    加密
+        String passwordHash = passwordUtils.hashPassword(password);
 
 //    添加
-        userMapper.add(username,password,userPic,email);
+        userMapper.add(username,passwordHash);
     }
 
     @Override
-    public List<User> getAllUserInfo(Integer page, Integer size) {
+    public List<Users> getAllUserInfo(Integer page, Integer size) {
         Integer offset = (page - 1) * size;
         return userMapper.getAllUserInfo(offset,size);
 
@@ -52,7 +63,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUserRegisterName(String username) {
+    public Users findByUserRegisterName(String username) {
         return userMapper.findByUserRegisterName(username);
+    }
+
+    @Override
+    public boolean passwordEq(String password,String username) {
+//        获取该用户hash密码
+        String password1 = userMapper.getPassword(username);
+//        解密
+        return passwordUtils.matches(password,password1);
+    }
+
+    @Override
+    public Users getByUserLoginName(String username) {
+        return userMapper.getUserInfo(username);
+    }
+
+    @Override
+    public LoginDTO getCurrentUser(String accessToken) {
+        if (accessToken != null && jwtUtils.validateToken(accessToken)) {
+            String username = jwtUtils.getUsernameFromToken(accessToken);
+            Users user = userMapper.getUserInfo(username);
+            return LoginDTO.fromEntity(user);
+        }
+        return null;
     }
 }
