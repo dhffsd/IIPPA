@@ -1,6 +1,6 @@
 package com.xymzsfxy.backend.service;
 
-import com.xymzsfxy.backend.dto.LoginDTO;
+import com.xymzsfxy.backend.dto.UserInfoDTO;
 import com.xymzsfxy.backend.entity.Users;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +26,7 @@ public interface UserService {
 //  根据用户名获取个人信息
     Users getByUserLoginName(String username);
 //  用户认证
-    LoginDTO getCurrentUser(String accessToken);
+    UserInfoDTO getCurrentUser(String accessToken);
+//  更新用户信息
+    boolean updateUserInfo(String accessToken, UserInfoDTO userInfoDTO);
 }

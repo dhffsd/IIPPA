@@ -1,6 +1,7 @@
 package com.xymzsfxy.backend.controller.web;
 
 import com.xymzsfxy.backend.dto.LoginDTO;
+import com.xymzsfxy.backend.dto.UserInfoDTO;
 import com.xymzsfxy.backend.entity.Users;
 import com.xymzsfxy.backend.returncode.Result;
 import com.xymzsfxy.backend.service.UserService;
@@ -26,10 +27,11 @@ public class UserController {
     private JWTUtils jwtUtils;
 
     @PostMapping("/register")
-    public Result<?> register(@RequestBody Users user) {
-        Users u = userService.findByUserRegisterName(user.getUsername());
+    public Result<?> register(@RequestParam @Pattern(regexp = "^\\S{4,16}$") String username,
+                              @RequestParam String passwordHash) {
+        Users u = userService.findByUserRegisterName(username);
         if (u == null) {
-            userService.register(user.getUsername(), user.getPasswordHash());
+            userService.register(username, passwordHash);
             return Result.success();
         } else {
             return Result.badRequest("用户名已存在");
@@ -103,9 +105,9 @@ public class UserController {
 
     // 获取当前登录用户信息
     @GetMapping("/info")
-    public Result<LoginDTO> getCurrentUser(
+    public Result<UserInfoDTO> getCurrentUser(
             @CookieValue(name = "access_token", required = false) String accessToken) {
-        LoginDTO currentUser = userService.getCurrentUser(accessToken);
+        UserInfoDTO currentUser = userService.getCurrentUser(accessToken);
 
         if (currentUser == null) {
             return Result.badRequest("未登录或令牌无效");
@@ -113,6 +115,22 @@ public class UserController {
 
         return Result.success(currentUser);
     }
+
+    // 更新用户信息
+    @PutMapping("/update")
+    public Result updateUserInfo(
+            @ModelAttribute UserInfoDTO userInfoDTO,
+            @CookieValue(name = "access_token", required = false) String accessToken) {
+        boolean updatedUser = userService.updateUserInfo(accessToken,userInfoDTO);
+        if (updatedUser) {
+            return Result.badRequest("未登录或令牌无效");
+        }else {
+            return Result.success();
+        }
+    }
+
+
+    // 更新用户头像
 
 
 }

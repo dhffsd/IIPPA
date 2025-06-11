@@ -1,6 +1,6 @@
 package com.xymzsfxy.backend.service.impl;
 
-import com.xymzsfxy.backend.dto.LoginDTO;
+import com.xymzsfxy.backend.dto.UserInfoDTO;
 import com.xymzsfxy.backend.entity.Users;
 import com.xymzsfxy.backend.mapper.UserMapper;
 import com.xymzsfxy.backend.service.UserService;
@@ -81,12 +81,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginDTO getCurrentUser(String accessToken) {
+    public UserInfoDTO getCurrentUser(String accessToken) {
         if (accessToken != null && jwtUtils.validateToken(accessToken)) {
             String username = jwtUtils.getUsernameFromToken(accessToken);
             Users user = userMapper.getUserInfo(username);
-            return LoginDTO.fromEntity(user);
+            return UserInfoDTO.fromEntity(user);
         }
         return null;
+    }
+
+    @Override
+    public boolean updateUserInfo(String accessToken, UserInfoDTO userInfoDTO) {
+        // 验证并获取当前用户ID
+        if (accessToken != null && jwtUtils.validateToken(accessToken)) {
+            Long userId = jwtUtils.getUserIdFromToken(accessToken);
+            userMapper.updateUserInfo(userId, userInfoDTO.getUsername(),
+                    userInfoDTO.getEmail(), userInfoDTO.getPhone(), userInfoDTO.getCompany(),
+                    userInfoDTO.getIntroduction(), userInfoDTO.getRegion(), userInfoDTO.getGender());
+            return true;
+        }
+        return false;
+
+
     }
 }

@@ -9,13 +9,13 @@ import java.util.Date;
 /** 
  * @team mackie Studio 
  * @Author 无深 
- * @Date 2025-06-04 15:05:42 
+ * @Date 2025-06-06 08:42:17 
  */
 @Entity
 @Table ( name ="users" )
 public class Users  implements Serializable {
 
-	private static final long serialVersionUID =  8809140844169541930L;
+	private static final long serialVersionUID =  2839050621490230741L;
 
 	/**
 	 * 用户ID
@@ -71,6 +71,30 @@ public class Users  implements Serializable {
 	 */
    	@Column(name = "is_active" )
 	private Integer isActive;
+
+	/**
+	 * 公司
+	 */
+   	@Column(name = "company" )
+	private String company;
+
+	/**
+	 * 所在地区
+	 */
+   	@Column(name = "region" )
+	private String region;
+
+	/**
+	 * 个人简介
+	 */
+   	@Column(name = "introduction" )
+	private String introduction;
+
+	/**
+	 * 性别
+	 */
+   	@Column(name = "gender" )
+	private String gender;
 
 	/**
 	 * 创建时间
@@ -162,6 +186,42 @@ public class Users  implements Serializable {
 
   public void setIsActive(Integer isActive) {
     this.isActive = isActive;
+  }
+
+
+  public String getCompany() {
+    return company;
+  }
+
+  public void setCompany(String company) {
+    this.company = company;
+  }
+
+
+  public String getRegion() {
+    return region;
+  }
+
+  public void setRegion(String region) {
+    this.region = region;
+  }
+
+
+  public String getIntroduction() {
+    return introduction;
+  }
+
+  public void setIntroduction(String introduction) {
+    this.introduction = introduction;
+  }
+
+
+  public String getGender() {
+    return gender;
+  }
+
+  public void setGender(String gender) {
+    this.gender = gender;
   }
 
 

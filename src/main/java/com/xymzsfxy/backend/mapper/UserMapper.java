@@ -4,6 +4,7 @@ import com.xymzsfxy.backend.entity.Users;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -30,6 +31,9 @@ public interface UserMapper {
     @Select("select password_hash from users where username=#{username}")
     String getPassword(String username);
 
-    @Select("select id,username,avatar_url,avatar_type,created_at,updated_at from users where username=#{username}")
+    @Select("select id,username,email,phone,avatar_url,avatar_type,company,introduction,region,gender,created_at,updated_at from users where username=#{username}")
     Users getUserInfo(String username);
+
+    @Update("update users set username=#{username},email=#{email},phone=#{phone},company=#{company},introduction=#{introduction},region=#{region},gender=#{gender},updated_at=now() where id=#{userId} ")
+    Integer updateUserInfo(Long userId, String username, String email, String phone, String company, String introduction, String region, String gender);
 }

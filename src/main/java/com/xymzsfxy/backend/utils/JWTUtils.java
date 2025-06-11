@@ -117,4 +117,12 @@ public class JWTUtils {
                 .getBody();
         return claims.get("username", String.class);
     }
+
+    public Long getUserIdFromToken(String accessToken) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(signingKey)
+                .parseClaimsJws(accessToken)
+                .getBody();
+        return claims.get("userId", Long.class);
+    }
 }
