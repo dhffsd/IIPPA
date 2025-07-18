@@ -3,8 +3,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 /** 
  * @team mackie Studio 
@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Entity
 @Table ( name ="user_vip" )
-public class Vip  implements Serializable {
+public class UserVip  implements Serializable {
 
 	private static final long serialVersionUID =  1694061137730719951L;
 
@@ -52,7 +52,7 @@ public class Vip  implements Serializable {
 	 * 到期日期
 	 */
    	@Column(name = "expire_date" )
-	private Date expireDate;
+	private LocalDate expireDate;
 
 	/**
 	 * 首次开通时间
@@ -111,11 +111,11 @@ public class Vip  implements Serializable {
   }
 
 
-  public Date getExpireDate() {
+  public LocalDate getExpireDate() {
     return expireDate;
   }
 
-  public void setExpireDate(Date expireDate) {
+  public void setExpireDate(LocalDate expireDate) {
     this.expireDate = expireDate;
   }
 

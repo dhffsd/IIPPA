@@ -9,13 +9,13 @@ import java.util.Date;
 /** 
  * @team mackie Studio 
  * @Author 无深 
- * @Date 2025-06-06 08:42:17 
+ * @Date 2025-06-16 11:40:07 
  */
 @Entity
 @Table ( name ="users" )
 public class Users  implements Serializable {
 
-	private static final long serialVersionUID =  2839050621490230741L;
+	private static final long serialVersionUID =  7604166241418306103L;
 
 	/**
 	 * 用户ID
@@ -95,6 +95,21 @@ public class Users  implements Serializable {
 	 */
    	@Column(name = "gender" )
 	private String gender;
+
+	/**
+	 * 用户角色：admin-管理员，moderator-版主，vip-VIP会员，regular-普通用户
+	 */
+   	@Column(name = "role" )
+	private String role;
+
+	/**
+	 * 用户徽章列表（JSON数组，如["vip", "expert"]）
+	 */
+   	@Column(name = "badges" )
+	private String badges;
+
+    @Column(name = "available_points" )
+    private Long availablePoints;
 
 	/**
 	 * 创建时间
@@ -225,6 +240,24 @@ public class Users  implements Serializable {
   }
 
 
+  public String getRole() {
+    return role;
+  }
+
+  public void setRole(String role) {
+    this.role = role;
+  }
+
+
+  public String getBadges() {
+    return badges;
+  }
+
+  public void setBadges(String badges) {
+    this.badges = badges;
+  }
+
+
   public Date getCreatedAt() {
     return createdAt;
   }
@@ -242,4 +275,11 @@ public class Users  implements Serializable {
     this.updatedAt = updatedAt;
   }
 
+    public Long getAvailablePoints() {
+        return availablePoints;
+    }
+
+    public void setAvailablePoints(Long availablePoints) {
+        this.availablePoints = availablePoints;
+    }
 }

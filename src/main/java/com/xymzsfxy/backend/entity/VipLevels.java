@@ -13,7 +13,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table ( name ="vip_levels" )
-public class Levels  implements Serializable {
+public class VipLevels  implements Serializable {
 
 	private static final long serialVersionUID =  374413454696669814L;
 

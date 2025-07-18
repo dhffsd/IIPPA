@@ -10,13 +10,13 @@ import java.io.InputStream;
 /** 
  * @team mackie Studio 
  * @Author 无深 
- * @Date 2025-06-04 15:05:41 
+ * @Date 2025-06-17 21:43:42 
  */
 @Entity
 @Table ( name ="comment_attachments" )
-public class Attachments  implements Serializable {
+public class commentAttachments  implements Serializable {
 
-	private static final long serialVersionUID =  7266251937765783767L;
+	private static final long serialVersionUID =  6386010725581719918L;
 
 	/**
 	 * 附件ID
@@ -41,7 +41,7 @@ public class Attachments  implements Serializable {
 	 * 文件类型
 	 */
    	@Column(name = "file_type" )
-	private InputStream fileType;
+	private String fileType;
 
 	/**
 	 * 缩略图地址
@@ -88,11 +88,11 @@ public class Attachments  implements Serializable {
   }
 
 
-  public InputStream getFileType() {
+  public String getFileType() {
     return fileType;
   }
 
-  public void setFileType(InputStream fileType) {
+  public void setFileType(String fileType) {
     this.fileType = fileType;
   }
 

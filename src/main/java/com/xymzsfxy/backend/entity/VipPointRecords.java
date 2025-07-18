@@ -3,17 +3,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
 import java.io.Serializable;
-import java.util.Date;
-/** 
+import java.time.LocalDateTime;
+
+/**
  * @team mackie Studio 
  * @Author 无深 
  * @Date 2025-06-04 15:05:42 
  */
 @Entity
 @Table ( name ="vip_point_records" )
-public class PointRecords  implements Serializable {
+public class VipPointRecords  implements Serializable {
 
 	private static final long serialVersionUID =  7822952559890986604L;
 
@@ -34,7 +34,7 @@ public class PointRecords  implements Serializable {
 	 * 变更值
 	 */
    	@Column(name = "points" )
-	private Integer points;
+	private Long points;
 
 	/**
 	 * 来源
@@ -52,7 +52,7 @@ public class PointRecords  implements Serializable {
 	 * 创建时间
 	 */
    	@Column(name = "created_at" )
-	private Date createdAt;
+	private LocalDateTime createdAt;
 
   public Long getId() {
     return id;
@@ -72,11 +72,11 @@ public class PointRecords  implements Serializable {
   }
 
 
-  public Integer getPoints() {
+  public Long getPoints() {
     return points;
   }
 
-  public void setPoints(Integer points) {
+  public void setPoints(Long points) {
     this.points = points;
   }
 
@@ -99,11 +99,11 @@ public class PointRecords  implements Serializable {
   }
 
 
-  public Date getCreatedAt() {
+  public LocalDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
   }
 

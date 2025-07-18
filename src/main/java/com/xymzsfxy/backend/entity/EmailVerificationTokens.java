@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Entity
 @Table ( name ="email_verification_tokens" )
-public class VerificationTokens  implements Serializable {
+public class EmailVerificationTokens  implements Serializable {
 
 	private static final long serialVersionUID =  5066053868628127719L;
 

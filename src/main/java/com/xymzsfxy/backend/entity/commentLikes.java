@@ -9,13 +9,13 @@ import java.util.Date;
 /** 
  * @team mackie Studio 
  * @Author 无深 
- * @Date 2025-06-04 15:05:41 
+ * @Date 2025-06-17 21:41:18 
  */
 @Entity
 @Table ( name ="comment_likes" )
-public class Likes  implements Serializable {
+public class commentLikes  implements Serializable {
 
-	private static final long serialVersionUID =  4470454119874423780L;
+	private static final long serialVersionUID =  3144205233779088063L;
 
 	/**
 	 * 点赞用户ID

@@ -43,12 +43,6 @@ public class Articles  implements Serializable {
 	private String content;
 
 	/**
-	 * 文章摘要
-	 */
-   	@Column(name = "summary" )
-	private String summary;
-
-	/**
 	 * 文章分类
 	 */
    	@Column(name = "category" )
@@ -138,13 +132,6 @@ public class Articles  implements Serializable {
   }
 
 
-  public String getSummary() {
-    return summary;
-  }
-
-  public void setSummary(String summary) {
-    this.summary = summary;
-  }
 
 
   public String getCategory() {

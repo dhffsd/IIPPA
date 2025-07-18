@@ -3,9 +3,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.math.BigDecimal;
 /** 
  * @team mackie Studio 
@@ -14,7 +13,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table ( name ="vip_orders" )
-public class Orders  implements Serializable {
+public class VipOrders  implements Serializable {
 
 	private static final long serialVersionUID =  59564935063263637L;
 
@@ -65,7 +64,7 @@ public class Orders  implements Serializable {
 	 * 支付时间
 	 */
    	@Column(name = "payment_time" )
-	private Date paymentTime;
+	private LocalDateTime paymentTime;
 
 	/**
 	 * 订单状态
@@ -77,7 +76,7 @@ public class Orders  implements Serializable {
 	 * 创建时间
 	 */
    	@Column(name = "created_at" )
-	private Date createdAt;
+	private LocalDateTime createdAt;
 
   public Long getId() {
     return id;
@@ -142,11 +141,11 @@ public class Orders  implements Serializable {
   }
 
 
-  public Date getPaymentTime() {
+  public LocalDateTime getPaymentTime() {
     return paymentTime;
   }
 
-  public void setPaymentTime(Date paymentTime) {
+  public void setPaymentTime(LocalDateTime paymentTime) {
     this.paymentTime = paymentTime;
   }
 
@@ -160,11 +159,11 @@ public class Orders  implements Serializable {
   }
 
 
-  public Date getCreatedAt() {
+  public LocalDateTime getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(Date createdAt) {
+  public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
   }
 

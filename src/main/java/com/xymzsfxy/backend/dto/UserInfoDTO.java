@@ -28,6 +28,7 @@ public class UserInfoDTO {
     private String introduction;
     private String region;
     private String gender;
+    private String role;
     private LocalDateTime createdAt; // LocalDateTime 类型
     private LocalDateTime updatedAt; // LocalDateTime 类型
 
@@ -46,6 +47,7 @@ public class UserInfoDTO {
                 .introduction(user.getIntroduction())
                 .region(user.getRegion())
                 .gender(user.getGender())
+                .role(user.getRole())
                 .createdAt(convertToLocalDateTime(user.getCreatedAt()))
                 .updatedAt(convertToLocalDateTime(user.getUpdatedAt()))
                 .build();
