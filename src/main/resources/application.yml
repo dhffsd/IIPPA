@@ -72,3 +72,6 @@ server:
         domain: 182.92.154.131
         same-site: lax
         secure: false
+
+llm:
+  endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
