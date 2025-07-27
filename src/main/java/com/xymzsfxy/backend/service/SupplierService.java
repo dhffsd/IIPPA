@@ -25,4 +25,7 @@ public interface SupplierService {
 
     // 获取供应商数量
     Long getTotalCount();
+
+    List<Supplier> fuzzySearchSuppliers(String query, int offset, Integer size);
+    Long fuzzyCountSuppliers(String query);
 }

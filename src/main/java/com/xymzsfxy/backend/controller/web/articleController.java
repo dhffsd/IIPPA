@@ -29,7 +29,7 @@ public class articleController {
         if(b){
             return Result.success();
         }else {
-            return Result.badRequest("操作错误");
+            return Result.badRequest("文章内容不符合平台规范，请修改后重新发布");
         }
 
     }

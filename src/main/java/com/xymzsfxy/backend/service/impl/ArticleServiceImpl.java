@@ -7,7 +7,9 @@ import com.xymzsfxy.backend.mapper.ArticleMapper;
 import com.xymzsfxy.backend.mapper.CommentMapper;
 import com.xymzsfxy.backend.mapper.UserMapper;
 import com.xymzsfxy.backend.service.ArticleService;
+import com.xymzsfxy.backend.service.ContentModerationService;
 import com.xymzsfxy.backend.utils.JWTUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j  // 添加这个注解
 public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private JWTUtils jwtUtils;
@@ -25,24 +28,53 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private CommentMapper commentMapper;
 
+    // 在 ArticleServiceImpl.java 中添加
+    @Autowired
+    private ContentModerationService moderationService;
+
     @Override
     public boolean articleCreate(ArticleCreateDTO articleCreateDTO, String accessToken) {
-        try{
+        try {
             // 解析token，获取用户ID
             Long userId = jwtUtils.getUserIdFromToken(accessToken);
-            // 创建文章
+            Users user = userMapper.selectDetailById(userId);
+
+            // 先进行内容审核
+            ModerationRequestDTO request = ModerationRequestDTO.builder()
+                    .contentId(articleCreateDTO.getTitle() + "_" + System.currentTimeMillis())
+                    .contentType("article")
+                    .title(articleCreateDTO.getTitle())
+                    .content(articleCreateDTO.getContent())
+                    .authorId(userId)
+                    .authorName(user.getUsername())
+                    .category(articleCreateDTO.getCategory())
+                    .moderationLevel("medium")
+                    .source("web")
+                    .build();
+
+            ModerationResultDTO result = moderationService.moderateArticle(request);
+
+            // 检查审核结果
+            if ("REJECT".equals(result.getDecision())) {
+                log.warn("文章审核被拒绝: {}", result.getAiReason());
+                return false; // 审核不通过，直接返回失败
+            }
+
+            // 审核通过或需要人工审核，继续创建文章
             articleMapper.articleCreate(
                     userId,
                     articleCreateDTO.getTitle(),
                     articleCreateDTO.getContent(),
                     articleCreateDTO.getCategory()
             );
+
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
+            log.error("文章创建失败", e);
             return false;
         }
-
     }
+
 
     @Override
     public List<ArticleGetAllDTO> getAllArticles(Integer page, Integer pageSize, String category) {
@@ -135,5 +167,40 @@ public class ArticleServiceImpl implements ArticleService {
         articleMapper.incrementViewCount(id);
 
         return detail;
+    }
+
+    @Override
+    public List<ArticleGetAllDTO> fuzzySearchArticles(String query, int offset, Integer size) {
+        List<Articles> articles = articleMapper.fuzzyFindByTitle(query, offset, size);
+        // 2. 提取所有用户ID（过滤空值）
+        List<Long> userIds = articles.stream()
+                .map(Articles::getUserId)
+                .filter(Objects::nonNull) // 过滤无用户ID的文章
+                .collect(Collectors.toList());
+
+        // 3. 批量查询用户信息并封装为 final Map
+        final Map<Long, Users> userMap;
+        if (!userIds.isEmpty()) {
+            List<Users> users = userMapper.selectById(userIds);
+            userMap = users.stream()
+                    .collect(Collectors.toMap(
+                            Users::getId,
+                            user -> user,
+                            (existing, replacement) -> existing
+                    ));
+        } else {
+            userMap = Collections.emptyMap(); // 无用户ID时返回空Map
+        }
+
+        // 假设有 ArticleGetAllDTO.fromArticleEntity 静态方法
+        return articles.stream().map(article -> {
+                    Users user = userMap.get(article.getUserId()); // 安全引用 final Map
+                    return ArticleGetAllDTO.fromArticleEntity(article, user);
+                })
+                .collect(Collectors.toList());
+    }
+    @Override
+    public Long fuzzyCountArticles(String query) {
+        return articleMapper.fuzzyCountByTitle(query);
     }
 }

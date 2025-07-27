@@ -23,4 +23,7 @@ public interface ArticleService {
 
     // 根据ID返回文章
     ArticleGetDetailDTO selectById(String id);
+
+    List<ArticleGetAllDTO> fuzzySearchArticles(String query, int offset, Integer size);
+    Long fuzzyCountArticles(String query);
 }

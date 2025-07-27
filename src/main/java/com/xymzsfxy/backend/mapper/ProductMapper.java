@@ -4,6 +4,7 @@ import com.xymzsfxy.backend.entity.Product;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 @Mapper
 public interface ProductMapper {
@@ -27,9 +28,16 @@ public interface ProductMapper {
     @Select("select count(*) from product")
     Long getTotalCount();
 
-    @Select("SELECT * FROM product WHERE name LIKE CONCAT('%', #{name}, '%') LIMIT #{offset}, #{size}")
+    // 恢复原有实现，移除模糊搜索SQL
+    @Select("SELECT * FROM product WHERE name=#{name} LIMIT #{offset}, #{size}")
     List<Product> FindByProductName(String name, Integer offset, Integer size);
 
+    @Select("SELECT * FROM product WHERE name LIKE CONCAT('%', #{name}, '%') LIMIT #{offset}, #{size}")
+    List<Product> fuzzyFindByName(@Param("name") String name, @Param("offset") int offset, @Param("size") int size);
+
     @Select("SELECT COUNT(*) FROM product WHERE name LIKE CONCAT('%', #{name}, '%')")
+    Long fuzzyCountByName(@Param("name") String name);
+
+    @Select("SELECT COUNT(*) FROM product WHERE name=#{name}")
     Long getNameCount(String name);
 }

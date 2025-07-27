@@ -3,6 +3,7 @@ package com.xymzsfxy.backend.mapper;
 import com.xymzsfxy.backend.entity.Articles;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -39,4 +40,16 @@ public interface ArticleMapper {
 
     @Update("UPDATE articles SET view_count = view_count + 1 WHERE id = #{id}")
     void incrementViewCount(String id);
+    // 恢复原有实现，移除模糊搜索SQL
+    @Select("SELECT * FROM articles WHERE title = #{title} LIMIT #{offset}, #{size}")
+    List<Articles> findByTitle(@Param("title") String title, @Param("offset") int offset, @Param("size") int size);
+
+    @Select("SELECT COUNT(*) FROM articles WHERE title = #{title}")
+    Long countByTitle(@Param("title") String title);
+
+    @Select("SELECT * FROM articles WHERE title LIKE CONCAT('%', #{title}, '%') LIMIT #{offset}, #{size}")
+    List<Articles> fuzzyFindByTitle(@Param("title") String title, @Param("offset") int offset, @Param("size") int size);
+
+    @Select("SELECT COUNT(*) FROM articles WHERE title LIKE CONCAT('%', #{title}, '%')")
+    Long fuzzyCountByTitle(@Param("title") String title);
 }

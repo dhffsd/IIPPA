@@ -30,4 +30,7 @@ public interface ProductService {
 
     // 获取模糊查询的数量
     Long getNameCount(String name);
+
+    List<Product> fuzzySearchProducts(String query, int offset, Integer size);
+    Long fuzzyCountProducts(String query);
 }

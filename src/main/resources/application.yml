@@ -15,6 +15,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   mail:
     host: smtp.qq.com
     username: 3170195273@qq.com
@@ -75,3 +79,27 @@ server:
 
 llm:
   endpoint: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions
+
+aliyun:
+  oss:
+    bucketName: bucket-iipa
+    endpoint: oss-cn-beijing.aliyuncs.com
+
+
+# 内容审核配置
+moderation:
+  ai:
+    enabled: true
+    model: "qwen-plus"
+    timeout: 10000
+    retry-times: 3
+  levels:
+    article: "medium"
+    comment: "low"
+  auto-approve:
+    confidence-threshold: 0.9
+    low-risk-keywords: ["技术", "产品", "服务"]
+  manual-review:
+    enabled: true
+    queue-size: 100
+    batch-size: 10

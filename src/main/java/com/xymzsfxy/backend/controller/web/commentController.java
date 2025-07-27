@@ -26,7 +26,7 @@ public class commentController {
         if(isTrue){
             return Result.success();
         }else {
-            return Result.badRequest("操作失败");
+            return Result.badRequest("评论内容不符合平台规范，请修改后重新发布");
         }
 
     }

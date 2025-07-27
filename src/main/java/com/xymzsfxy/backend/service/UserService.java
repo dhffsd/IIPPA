@@ -1,6 +1,7 @@
 package com.xymzsfxy.backend.service;
 
 import com.xymzsfxy.backend.dto.UserInfoDTO;
+import com.xymzsfxy.backend.entity.EmailVerificationTokens;
 import com.xymzsfxy.backend.entity.Users;
 import org.springframework.stereotype.Service;
 
@@ -29,4 +30,17 @@ public interface UserService {
     UserInfoDTO getCurrentUser(String accessToken);
 //  更新用户信息
     boolean updateUserInfo(String accessToken, UserInfoDTO userInfoDTO);
+//  更新用户头像
+    void updateAvatarById(String accessToken, String avatarUrl, String avatarType);
+//  保存邮箱校验码
+    void sendBindMailCode(String mail, String accessToken);
+//  校验邮箱验证码
+    Boolean bindMail(String accessToken, String mail, String code);
+
+    Users findByEmail(String mail);
+
+
+    void sendLoginMailCode(Long id, String mail);
+
+    EmailVerificationTokens loginByMail(Long id, String code, String mail);
 }

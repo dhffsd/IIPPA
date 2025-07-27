@@ -1,15 +1,18 @@
 package com.xymzsfxy.backend.service.impl;
 
 import com.xymzsfxy.backend.dto.UserInfoDTO;
+import com.xymzsfxy.backend.entity.EmailVerificationTokens;
 import com.xymzsfxy.backend.entity.Users;
 import com.xymzsfxy.backend.mapper.UserMapper;
 import com.xymzsfxy.backend.service.UserService;
 import com.xymzsfxy.backend.utils.JWTUtils;
 import com.xymzsfxy.backend.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -21,6 +24,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private JWTUtils jwtUtils;
+
+
+    @Autowired(required = false)
+    private JavaMailSender sender;
 
     // 实现根据用户名查找
     @Override
@@ -103,5 +110,71 @@ public class UserServiceImpl implements UserService {
         return false;
 
 
+    }
+
+    @Override
+    public void updateAvatarById(String accessToken, String avatarUrl, String avatarType) {
+        Long userId = jwtUtils.getUserIdFromToken(accessToken);
+        userMapper.updateAvatar(userId, avatarUrl, avatarType);
+    }
+
+    @Override
+    public void sendBindMailCode(String mail, String accessToken) {
+
+        // 生成验证码
+        String code = String.valueOf(100000 + new Random().nextInt(900000));
+        // 发送邮件
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setSubject("邮箱绑定验证码");
+        message.setText("您的邮箱绑定验证码为：" + code + "，有效期2分钟。");
+        message.setTo(mail);
+        message.setFrom("3170195273@qq.com");
+        sender.send(message);
+
+        // 保存到数据库
+        Long userId = jwtUtils.getUserIdFromToken(accessToken);
+        Date exdate = new Date(System.currentTimeMillis() + 2 * 60 * 1000);
+        // 保存token到数据库
+        userMapper.saveMailToken(userId, code, exdate);
+
+    }
+
+    @Override
+    public Boolean bindMail(String accessToken, String mail, String code) {
+        Long userId = jwtUtils.getUserIdFromToken(accessToken);
+        EmailVerificationTokens token = userMapper.findTopByUserIdAndTokenOrderByCreatedAtDesc(userId, code);
+        if (token == null || token.getExpiresAt().before(new Date())) {
+            return false;
+        }
+        userMapper.setMailByUserId(mail,userId);
+        return true;
+    }
+
+    @Override
+    public Users findByEmail(String mail) {
+        Users users = userMapper.selectEmail(mail);
+        return users;
+    }
+
+    @Override
+    public void sendLoginMailCode(Long id, String mail) {
+        String code = String.valueOf(100000 + new Random().nextInt(900000));
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setSubject("邮箱登录验证码");
+        message.setText("您的登录验证码为：" + code + "，有效期2分钟。");
+        message.setTo(mail);
+        message.setFrom("3170195273@qq.com");
+        sender.send(message);
+        Date exdate = new Date(System.currentTimeMillis() + 2 * 60 * 1000);
+
+        userMapper.insertLoginMailCode(id, code, exdate);
+    }
+
+    @Override
+    public EmailVerificationTokens loginByMail(Long id, String code, String mail) {
+
+        EmailVerificationTokens token = userMapper.findTopByUserIdAndTokenOrderByCreatedAtDesc(id, code);
+
+        return token;
     }
 }

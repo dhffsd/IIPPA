@@ -2,6 +2,7 @@ package com.xymzsfxy.backend.controller.web;
 
 import com.xymzsfxy.backend.dto.LoginDTO;
 import com.xymzsfxy.backend.dto.UserInfoDTO;
+import com.xymzsfxy.backend.entity.EmailVerificationTokens;
 import com.xymzsfxy.backend.entity.Users;
 import com.xymzsfxy.backend.returncode.Result;
 import com.xymzsfxy.backend.service.UserService;
@@ -14,12 +15,12 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.xymzsfxy.backend.utils.AliOssUtil;
 
+import java.io.File;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @RestController
 @RequestMapping("/web/user")
@@ -138,56 +139,106 @@ public class UserController {
     }
 
 
-    // 更新用户头像
+    // 邮箱验证码
+    @PostMapping("/sendBindMailCode")
+    public Result sendBindMailCode(@RequestParam String mail, @CookieValue(name = "access_token", required = false) String accessToken) {
+        if (accessToken == null) return Result.badRequest("未登录");
 
-    // QQ邮箱发送验证码
-    @PostMapping("/mail")
-    public Result sentMail(String mail, HttpServletRequest request){
-
-        try{
-            // 生成 6 位数字验证码
-//            Random random = new Random();
-//            String code = random.nextInt(8999) + 1000+"";// 验证码
-//            // 当前时间
-//            LocalDateTime currentTime = LocalDateTime.now();
-//
-//            //2min有效时间
-//            LocalDateTime expireTime = currentTime.plusMinutes(2);
-//
-//            //存储到session
-//            request.getSession().setAttribute("expireTime", expireTime);
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setSubject("车辆故障预警"); // 发送邮件的标题
-            message.setText("【车辆故障预警】⚠️\n" +
-                    "车型：大众迈腾\n" +
-                    "故障部件：发动机冷却系统\n" +
-                    "危险等级：★★★☆☆\n" +
-                    "预估影响：动力输出下降/高温风险\n" +
-                    "建议处理时限：立即\n\n" +
-                    "安全提示：\n" +
-                    "① 立即靠边停车，开启双闪\n" +
-                    "② 关闭空调系统降低发动机负载\n" +
-                    "③ 检查水温表，避免发动机高温\n" +
-                    "④ 联系专业救援服务：400-820-1888");// 发送邮件的内容
-            message.setTo(mail); // 指定要接收邮件的用户邮箱账号
-            message.setFrom("3170195273@qq.com");
-
-            sender.send(message); // 调用send方法发送邮件即可
-
-            //先用的session可以采用security
-//            request.getSession().setAttribute("qq",mail);
-//            request.getSession().setAttribute("code",code);
-//            request.getSession().setAttribute("expireTime",expireTime);
-//            request.getSession().setMaxInactiveInterval(60*2);
-            return Result.success();
-        }
-        catch (Exception e){
-            System.out.println(e);
-            return Result.badRequest("发送失败");
-        }
-
+        userService.sendBindMailCode(mail,accessToken);
+        return Result.success();
     }
+
+
+    // 校验邮箱验证码绑定
+    @PostMapping("/bindMail")
+    public Result<?> bindMail(@RequestParam String mail, @RequestParam String code, @CookieValue(name = "access_token", required = false) String accessToken) {
+        if (accessToken == null) return Result.badRequest("未登录");
+        // 绑定邮箱
+        Boolean aBoolean = userService.bindMail(accessToken, mail, code);
+        if (aBoolean) {
+            return Result.success();
+        }else {
+            return Result.badRequest("验证码无效或已过期");
+        }
+    }
+
+
+    @PostMapping("/sendLoginMailCode")
+    public Result sendLoginMailCode(@RequestParam String mail) {
+        Users user = userService.findByEmail(mail);
+        if (user == null) return Result.badRequest("邮箱未绑定账号");
+        userService.sendLoginMailCode(user.getId(),mail);
+        return Result.success();
+    }
+
+
+    @PostMapping("/loginByMail")
+    public Result<LoginDTO> loginByMail(@RequestParam String mail, @RequestParam String code, HttpServletResponse response) {
+        Users user = userService.findByEmail(mail);
+        if (user == null) return Result.badRequest("邮箱未绑定账号");
+        EmailVerificationTokens token = userService.loginByMail(user.getId(), code, mail);
+
+        if (token == null || token.getExpiresAt().before(new Date())) {
+            return Result.badRequest("验证码无效或已过期");
+        }
+
+        // 登录逻辑（生成JWT等）
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        claims.put("username", user.getUsername());
+        String accessToken = jwtUtils.generateAccessToken(claims);
+        String refreshToken = jwtUtils.generateRefreshToken(claims);
+        response.addHeader("Set-Cookie", jwtUtils.createAccessTokenCookie(accessToken).toString());
+        response.addHeader("Set-Cookie", jwtUtils.createRefreshTokenCookie(refreshToken).toString());
+
+        LoginDTO loginResponse = LoginDTO.fromEntity(user);
+
+        return Result.success(loginResponse);
+    }
+
+    // 上传头像文件到OSS并返回URL
+    @PostMapping("uploadAvatar")
+    public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
+        try {
+            // 1. 初始化OSS客户端
+            AliOssUtil.init();
+            // 2. 生成唯一文件名
+            String originalFilename = file.getOriginalFilename();
+            String ext = originalFilename != null && originalFilename.contains(".") ? originalFilename.substring(originalFilename.lastIndexOf('.')) : "";
+            String objectName = "avatar/" + System.currentTimeMillis() + ext;
+            // 3. 保存临时文件
+            File tempFile = File.createTempFile("oss_avatar_", ext);
+            file.transferTo(tempFile);
+            // 4. 上传到OSS
+            AliOssUtil.uploadFile(objectName, tempFile);
+            // 5. 获取永久URL（可根据需要设置过期时间，这里假设1年）
+            String url = AliOssUtil.getUrl(objectName, 3600 * 24 * 365).toString();
+            // 6. 删除临时文件
+            tempFile.delete();
+            // 7. 关闭OSS客户端
+            AliOssUtil.shutdown();
+            return Result.success(url);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.badRequest("头像上传失败: " + e.getMessage());
+        }
+    }
+
+
+    // 更新用户头像
+    @PutMapping("updateAvatar")
+    public Result updateAvatar(
+            @RequestParam String avatarUrl,
+            @RequestParam String avatarType, // "url" 或 "upload"
+            @CookieValue(name = "access_token", required = false) String accessToken
+    ) {
+        if (accessToken == null) {
+            return Result.badRequest("未登录");
+        }
+        userService.updateAvatarById(accessToken, avatarUrl, avatarType);
+        return Result.success();
+    }
+
 
 
 }

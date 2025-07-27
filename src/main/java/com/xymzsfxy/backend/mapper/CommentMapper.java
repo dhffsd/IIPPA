@@ -54,4 +54,18 @@ public interface CommentMapper {
             "            target_type = #{targetType}\n" +
             "            AND target_id = #{targetId}\n" )
     Long selectCommentTotal(String targetType, String targetId);
+
+    @Select("SELECT \n" +
+            "            ca.comment_id AS commentId,\n" +
+            "            ca.file_url AS fileUrl,\n" +
+            "            ca.file_type AS fileType,\n" +
+            "            ca.thumbnail_url AS thumbnailUrl,\n" +
+            "            ca.display_order AS displayOrder\n" +
+            "        FROM \n" +
+            "            comment_attachments ca\n" +
+            "        WHERE \n" +
+            "            ca.comment_id = #{commentId}\n" +
+            "        ORDER BY \n" +
+            "            ca.display_order ASC")
+    List<com.xymzsfxy.backend.dto.CommentAttachmentDTO> selectAttachmentsByCommentId(Long commentId);
 }

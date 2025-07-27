@@ -2,7 +2,6 @@ package com.xymzsfxy.backend.mapper;
 
 import com.xymzsfxy.backend.entity.Supplier;
 import org.apache.ibatis.annotations.*;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -26,4 +25,17 @@ public interface SupplierMapper {
 
     @Select("select count(*) from supplier")
     Long getTotalCount();
+
+    // 恢复原有实现，移除模糊搜索SQL
+    @Select("SELECT * FROM supplier WHERE name=#{name} LIMIT #{offset}, #{size}")
+    List<Supplier> findByName(@Param("name") String name, @Param("offset") int offset, @Param("size") int size);
+
+    @Select("SELECT COUNT(*) FROM supplier WHERE name=#{name}")
+    Long countByName(@Param("name") String name);
+
+    @Select("SELECT * FROM supplier WHERE name LIKE CONCAT('%', #{name}, '%') LIMIT #{offset}, #{size}")
+    List<Supplier> fuzzyFindByName(@Param("name") String name, @Param("offset") int offset, @Param("size") int size);
+
+    @Select("SELECT COUNT(*) FROM supplier WHERE name LIKE CONCAT('%', #{name}, '%')")
+    Long fuzzyCountByName(@Param("name") String name);
 }

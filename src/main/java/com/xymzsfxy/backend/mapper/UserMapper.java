@@ -1,11 +1,13 @@
 package com.xymzsfxy.backend.mapper;
 
+import com.xymzsfxy.backend.entity.EmailVerificationTokens;
 import com.xymzsfxy.backend.entity.Users;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -64,4 +66,27 @@ public interface UserMapper {
 
     @Update("update users set available_points = available_points + #{availablePoints} where id = #{userIdFromToken}")
     void updatePoints(Long userIdFromToken, Long availablePoints);
+
+    @Update("UPDATE users SET avatar_url = #{avatarUrl}, avatar_type = #{avatarType}, updated_at = NOW() WHERE id = #{userId}")
+    void updateAvatar(Long userId, String avatarUrl, String avatarType);
+
+    @Insert("insert into email_verification_tokens(user_id, token, expires_at, created_at)" +
+            "values(#{userId}, #{code}, #{exdate}, now())")
+    void saveMailToken(Long userId, String code, Date exdate);
+
+    @Select("SELECT * FROM email_verification_tokens " +
+            "WHERE user_id = #{userId} AND token = #{code} " +
+            "ORDER BY created_at DESC " +
+            "LIMIT 1")
+    EmailVerificationTokens findTopByUserIdAndTokenOrderByCreatedAtDesc(Long userId, String code);
+
+    @Update("update users set email = #{mail} where id = #{userId}")
+    void setMailByUserId(String mail, Long userId);
+
+    @Select("select * from users where email = #{mail}")
+    Users selectEmail(String mail);
+
+    @Insert("insert into email_verification_tokens(user_id, token, expires_at, created_at)" +
+            "values(#{id}, #{code}, #{exdate}, now())")
+    void insertLoginMailCode(Long id, String code, Date exdate);
 }

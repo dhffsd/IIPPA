@@ -51,4 +51,13 @@ public class SupplierServiceImpl implements SupplierService {
     public Long getTotalCount() {
         return supplierMapper.getTotalCount();
     }
+
+    @Override
+    public List<Supplier> fuzzySearchSuppliers(String query, int offset, Integer size) {
+        return supplierMapper.fuzzyFindByName(query, offset, size);
+    }
+    @Override
+    public Long fuzzyCountSuppliers(String query) {
+        return supplierMapper.fuzzyCountByName(query);
+    }
 }

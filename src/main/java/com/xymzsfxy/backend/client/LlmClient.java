@@ -40,7 +40,8 @@ public class LlmClient {
                     Map choice = (Map) choices.get(0);
                     Map message = (Map) choice.get("message");
                     if (message != null && message.get("content") != null) {
-                        return message.get("content").toString();
+                        String content = message.get("content").toString();
+                        return content;
                     }
                 }
             }

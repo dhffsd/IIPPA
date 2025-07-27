@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,4 +18,5 @@ public class CommentListDTO {
     private String username;    // 用户名（关联用户表）
     private String role;
     private String avatarUrl;   // 用户头像（关联用户表）
+    private List<CommentAttachmentDTO> attachments; // 评论附件列表
 }

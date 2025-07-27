@@ -61,4 +61,13 @@ public class ProductServiceImpl implements ProductService {
     public Long getNameCount(String name) {
         return productMapper.getNameCount(name);
     }
+
+    @Override
+    public List<Product> fuzzySearchProducts(String query, int offset, Integer size) {
+        return productMapper.fuzzyFindByName(query, offset, size);
+    }
+    @Override
+    public Long fuzzyCountProducts(String query) {
+        return productMapper.fuzzyCountByName(query);
+    }
 }
